@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1 class="text-light text-center mt-4 gugi">영화 상세정보</h1>
+<div class="container mt-3 shadow-lg p-0 mb-0 bg-white rounded">
+  <div class="card mb-3 bg-light" style="max-width: 80;">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img src="{{movie.poster_url}}" class="card-img" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-header gugi">
+          <div class="row">
+            <div class="col-8">
+              <h2 class="card-title my-auto">{{movie.title}} ({{movie.title_en}})</h2>
+            </div>
+            <div class="col-4 text-right">
+              <a href="{% url 'movies:update' movie.id %}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">수정</a>
+              <a href="{% url 'movies:delete' movie.id %}" class="btn btn-danger btn-lg" role="button" aria-pressed="true">삭제</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body sun">
+          <div class="row mb-3">
+            <div class="col-2 text-right font-weight-bold">개봉일</div>
+            <div class="col-9">{{movie.open_date}}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2 text-right font-weight-bold">평점</div>
+            <div class="col-9">
+              <span class="badge badge-info">{{movie.score}}</span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2 text-right font-weight-bold">장르</div>
+            <div class="col-9">{{movie.genre}}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2 text-right font-weight-bold">관람등급</div>
+            <div class="col-9">{{movie.watch_grade}}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2 text-right font-weight-bold">누적관객</div>
+            <div class="col-9">{{movie.audience}}명</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-2 text-right font-weight-bold">영화 소개</div>
+            <div class="col-9">{{movie.description}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ul class="list-group mb-5">
+    <li class="list-group-item">
+      <form action="{% url 'movies:comment_create' movie.id %}" method="POST">
+        {% csrf_token %}
+        <div class="input-group">
+          <div class="input-group-prepend my-2 my-sm-1">
+            <label for="content">
+              <span class="input-group-text sun">Reviews</span>
+            </label>
+          </div>
+          <input type="text" class="form-control my-2 my-sm-1 sun" id="content" name="content" placeholder="한줄 감상평을 등록해주세요." >
+          <button class="btn btn-primary my-0 my-sm-0 sun" type="submit">등록</button>
+        </div>
+      </form>
+    </li>
+      {% for comment in movie.comment_set.all %}
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10 text-left cute">{{comment.content}}
+              <div class="row">
+                  <small class="form-text text-muted text-right mx-3">등록일: {{comment.created_at}}</small>
+                  <a href="{% url 'movies:comment_delete' movie.id comment.id %}" class="btn btn-danger btn-sm" role="button" aria-pressed="true">DEL</a>
+              </div>
+            </div>
+            <div class="col-1"></div>
+          </div>
+        </li>
+      {% empty %}
+        <li class="list-group-item text-center gugi"><h5>등록된 감상평이 없습니다.</h5></li>
+      {% endfor %}
+  </ul>
+</div>
+{% endblock %}
